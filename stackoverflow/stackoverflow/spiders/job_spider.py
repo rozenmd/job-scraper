@@ -7,9 +7,9 @@ from stackoverflow.items import JobItem
 
 class JobSpider(scrapy.Spider):
     name = "jobs"
-    allowed_domains = ["careers.stackoverflow.com"]
-    base_url = "http://careers.stackoverflow.com"
-    job_base_url = "http://careers.stackoverflow.com/jobs/"
+    allowed_domains = ["stackoverflow.com"]
+    base_url = "https://stackoverflow.com"
+    job_base_url = "https://stackoverflow.com/jobs/"
     start_time = datetime.datetime.now()
 
     def start_requests(self):
@@ -19,7 +19,7 @@ class JobSpider(scrapy.Spider):
         # and html says that there are 3560 jobs
         for i in xrange(1, 100):
             yield self.make_requests_from_url(
-                "http://careers.stackoverflow.com/jobs/?pg=%d" % i)
+                "https://stackoverflow.com/jobs/?pg=%d" % i)
 
     def parse(self, response):
         """
