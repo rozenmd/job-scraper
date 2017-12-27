@@ -1,4 +1,5 @@
 import datetime
+import json
 
 import scrapy
 
@@ -46,14 +47,21 @@ class JobSpider(scrapy.Spider):
         Get job url, date, title, employer, tags, location and description
         Returns job item to pipeline
         """
+        x = response.xpath("//script[@type='application/ld+json']")
+        y = x[0].root.text
+        z = json.loads(y)
         job = response.meta['job']
         job['url'] = response.url
-        job['date'] = self.start_time.isoformat()
-        job['title'] = response.css('h1 a::text')[0].extract()
-        job['employer'] = response.css('.employer::text')[0].extract()
+        job['date'] = datetime.datetime.strptime(z['datePosted'],'%Y-%m-%d').isoformat()
+        job['title'] = z['title']
+        job['employer'] = z['hiringOrganization']['name']
         job['tags'] = response.css('.-technologies .-tags a::text').extract()
-        job['location'] = response.css('.-location::text')[0].extract().strip().replace('- \n','')
-        # Use xpath selectors and //text() for getting all the text in different levels
-        job['description'] = response.xpath('//div[@class="description"]').extract()
+        location = response.css('.-location::text')[0].extract().strip().replace('- \n', '')
+        if location == 'No office location':
+            job['location'] = 'Remote'
+        else:
+            job['location'] = location
+            # Use xpath selectors and //text() for getting all the text in different levels
+        job['description'] = response.xpath('//div[@class="description"]').extract_first()
 
         return job

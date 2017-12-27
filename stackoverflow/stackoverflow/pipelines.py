@@ -20,22 +20,13 @@ def format_location(s):
     return s.strip()
 
 
-def format_description(l):
-    l = map(lambda s: s.strip(), l)
-    l = filter(lambda s: s, l)
-    return l  # returns a list of cleaned non empty phrases
-
-
 class FormatPipeline(object):
-
     def process_item(self, item, spider):
         item['location'] = format_location(item['location'])
-        item['description'] = format_description(item['description'])
         return item
 
 
 class MongoDBPipeline(object):
-
     def __init__(self):
         connection = MongoClient(
             settings['MONGO_SERVER'],
@@ -50,18 +41,17 @@ class MongoDBPipeline(object):
         # date_updated will last have the last date the job was online
         date_updated = datetime.datetime.now()
         self.collection.update({'id': item['id']},
-            {
-                # http://docs.mongodb.org/manual/reference/operator/update/setOnInsert/
-                # Both are applied for insert, only $set for update
-                '$setOnInsert': dict(item),
-                '$set': {'date_updated': date_updated.isoformat()}
-            },
-            upsert=True)
+                               {
+                                   # http://docs.mongodb.org/manual/reference/operator/update/setOnInsert/
+                                   # Both are applied for insert, only $set for update
+                                   '$setOnInsert': dict(item),
+                                   '$set': {'date_updated': date_updated.isoformat()}
+                               },
+                               upsert=True)
         return item
 
 
 class DuplicatesPipeline(object):
-
     ids = []
     with open(IFILE) as f:
         for line in f:
@@ -76,7 +66,6 @@ class DuplicatesPipeline(object):
 
 
 class JsonWriterPipeline(object):
-
     def __init__(self):
         self.ifile = open(IFILE, 'a')
 
