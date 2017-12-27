@@ -12,7 +12,7 @@ BOT_NAME = 'stackoverflow'
 
 SPIDER_MODULES = ['stackoverflow.spiders']
 NEWSPIDER_MODULE = 'stackoverflow.spiders'
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 2
 
 MONGO_SERVER = 'localhost'
 MONGO_PORT = 27017

@@ -19,7 +19,7 @@ class JobSpider(scrapy.Spider):
         # and html says that there are 3560 jobs
         for i in xrange(1, 100):
             yield self.make_requests_from_url(
-                "https://stackoverflow.com/jobs/?pg=%d" % i)
+                "https://stackoverflow.com/jobs?pg=%d" % i)
 
     def parse(self, response):
         """
@@ -29,7 +29,7 @@ class JobSpider(scrapy.Spider):
         # looks for <a> elements with a data-jobid attribute
         # <a class="fav-toggle" data-jobid="81955"
         # href="/jobs/togglefavorite/81955?returnUrl=%2fjobs"></a>
-        jobs_id = response.css('a').xpath('@data-jobid').extract()
+        jobs_id = response.css('div').xpath('@data-jobid').extract()
 
         # Yield a request object to the job detail page
         for job_id in jobs_id:
@@ -49,11 +49,11 @@ class JobSpider(scrapy.Spider):
         job = response.meta['job']
         job['url'] = response.url
         job['date'] = self.start_time.isoformat()
-        job['title'] = response.css('#hed h1 a::text')[0].extract()
-        job['employer'] = response.css('#hed .employer::text')[0].extract()
-        job['tags'] = response.css('#hed .tags a::text').extract()
-        job['location'] = response.css('#hed .location::text')[0].extract()
+        job['title'] = response.css('h1 a::text')[0].extract()
+        job['employer'] = response.css('.employer::text')[0].extract()
+        job['tags'] = response.css('.-technologies .-tags a::text').extract()
+        job['location'] = response.css('.-location::text')[0].extract().strip().replace('- \n','')
         # Use xpath selectors and //text() for getting all the text in different levels
-        job['description'] = response.xpath('//div[@class="description"]//text()').extract()
+        job['description'] = response.xpath('//div[@class="description"]').extract()
 
         return job
