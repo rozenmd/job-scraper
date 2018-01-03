@@ -12,7 +12,7 @@ BOT_NAME = 'stackoverflow'
 
 SPIDER_MODULES = ['stackoverflow.spiders']
 NEWSPIDER_MODULE = 'stackoverflow.spiders'
-DOWNLOAD_DELAY = 2
+DOWNLOAD_DELAY = 1.2
 
 MONGO_SERVER = 'localhost'
 MONGO_PORT = 27017
@@ -28,4 +28,4 @@ ITEM_PIPELINES = {
 
 # Crawl responsibly by identifying yourself
 # (and your website) on the user-agent
-#USER_AGENT = 'stackoverflow (+http://www.yourdomain.com)'
+USER_AGENT = 'jobsok (+https://jobsok.io)'

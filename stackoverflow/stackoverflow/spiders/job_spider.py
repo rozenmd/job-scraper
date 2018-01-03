@@ -52,8 +52,9 @@ class JobSpider(scrapy.Spider):
         z = json.loads(y)
         job = response.meta['job']
         job['url'] = response.url
+        job['inAWS'] = False
         job['date'] = datetime.datetime.strptime(z['datePosted'],'%Y-%m-%d').isoformat()
-        job['title'] = z['title']
+        job['title'] = z['title'].replace('/','-')
         job['employer'] = z['hiringOrganization']['name']
         job['tags'] = response.css('.-technologies .-tags a::text').extract()
         location = response.css('.-location::text')[0].extract().strip().replace('- \n', '')

@@ -17,3 +17,4 @@ class JobItem(scrapy.Item):
     employer = scrapy.Field()
     description = scrapy.Field()
     url = scrapy.Field()
+    inAWS = scrapy.Field()
