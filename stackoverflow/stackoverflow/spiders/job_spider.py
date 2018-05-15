@@ -56,12 +56,14 @@ class JobSpider(scrapy.Spider):
         job['date'] = datetime.datetime.strptime(z['datePosted'],'%Y-%m-%d').isoformat()
         job['title'] = z['title'].replace('/','-')
         job['employer'] = z['hiringOrganization']['name']
-        job['tags'] = response.css('.-technologies .-tags a::text').extract()
-        location = response.css('.-location::text')[0].extract().strip().replace('- \n', '')
-        if location == 'No office location':
+        job['tags'] = z['skills']
+        if 'No office location' in response.css('.fc-black-500')[0].extract():
             job['location'] = 'Remote'
+        elif len(z['jobLocation']) > 0:
+            job['location'] = z['jobLocation'][0]['address']['addressLocality'] + ', ' + z['jobLocation'][0]['address']['addressCountry']
         else:
-            job['location'] = location
+            job['location'] = 'Unknown'
+
             # Use xpath selectors and //text() for getting all the text in different levels
         job['description'] = response.xpath('//div[@class="description"]').extract_first()
 
