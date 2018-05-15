@@ -65,6 +65,6 @@ class JobSpider(scrapy.Spider):
             job['location'] = 'Unknown'
 
             # Use xpath selectors and //text() for getting all the text in different levels
-        job['description'] = response.xpath('//div[@class="description"]').extract_first()
+        job['description'] = z['description']
 
         return job
